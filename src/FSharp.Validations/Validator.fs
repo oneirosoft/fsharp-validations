@@ -24,6 +24,8 @@ type ValidationResult<'a> =
     | Success of 'a
     | Failure of Map<string, string list>
 
+type Validator<'a> = 'a -> 'a ValidationResult
+
 let private createExpression (expr: ('a -> 'b) Expr) =
     let eval (expr: Expression) =
         (expr :?> Expression<Func<'a, 'b>>).Compile()
@@ -118,7 +120,8 @@ let ruleFor<'a, 'b> (selector: Expr<'a -> 'b>) (rules: (('b -> bool) * string) l
 /// <see cref="ValidationResult{T}" />
 /// </returns>
 /// </summary>
-let ruleSet<'a> rules (entity: 'a) =
+let ruleSet<'a> rules: 'a Validator =
+    fun entity ->
     rules
     |> List.map (fun rule -> rule entity)
     |> List.fold (fun acc x ->

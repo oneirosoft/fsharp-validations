@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Validator.fs" />
     <Compile Include="StringRules.fs" />
+    <Compile Include="IValidator.fs" />
   </ItemGroup>
 
   <ItemGroup>
