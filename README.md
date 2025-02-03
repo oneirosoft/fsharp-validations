@@ -14,16 +14,17 @@ The rules can then be evaluated at any time thanks to the magic of currying.
 ```fsharp
 open FSharp.Validations
 
-type Foo = { bar: string }
+type Foo = { Bar: string }
 
 let validateFoo =
-    ruleSet <@ _.bar @> [
-        rule (fun x -> x.Length > 0) (Some "Length must be greater than 0")
-        rule (fun x -> x.Length < 10) (Some "Length must be less than 10") ] 
+    ruleSet [
+        ruleFor <@ _.Bar @> [
+            rule (fun x -> x.Length > 0) (Some "Length must be greater than 0")
+            rule (fun x -> x.Length < 10) (Some "Length must be less than 10") ] ] 
 
-let result = validateFoo { bar = "Hello, World!" }
+let result = validateFoo { Bar = "Hello, World!" }
 
-// result is Failure (map [("bar", ["Value must be less than 10"])])
+// result is Failure (map [("Bar", ["Value must be less than 10"])])
 ```
 
 ## `ValidationResult<'a>`
