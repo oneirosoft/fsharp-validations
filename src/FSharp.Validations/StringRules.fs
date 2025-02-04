@@ -1,3 +1,4 @@
+[<AutoOpen>]
 module FSharp.Validations.StringRules
 
 open System.Text.RegularExpressions

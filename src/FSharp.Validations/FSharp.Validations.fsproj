@@ -11,8 +11,4 @@
     <Compile Include="IValidator.fs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\tests\FSharp.Validations.Tests\FSharp.Validations.Tests.csproj" />
-  </ItemGroup>
-
 </Project>
