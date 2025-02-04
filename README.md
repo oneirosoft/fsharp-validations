@@ -41,4 +41,9 @@ let result = validateFoo { bar = "Hello, World!" }
 match result with
 | Success value -> printfn "%A" value
 | Failure errors -> errors |> Map.iter (printfn "%s: %A")
+```
 
+## License, Copywright, Etc.
+
+FSharp.Validations is subject to copywright @ 2025 Oneirosoft and other
+contributors under the [MIT License](LICENSE). 
