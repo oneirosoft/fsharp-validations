@@ -140,4 +140,5 @@ let ruleSet<'a> rules: 'a Validator =
             |> List.fold (fun acc (key, values) ->
                 Map.change key (Option.map ((@) values) >> Option.orElse (Some values)) acc) map
             |> Failure
-        | Ok _, Failure map -> Failure map) (Success entity)
+        | Ok _, Failure map -> Failure map
+    ) (Success entity)

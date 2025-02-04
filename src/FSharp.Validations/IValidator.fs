@@ -27,4 +27,5 @@ module IValidator =
     /// <returns>
     /// An <see cref="IValidator{T}"/> instance.
     /// </returns>
-    let toValidator<'a> validator = DefaultValidator(validator) :> 'a IValidator
+    let toValidator<'a> validator =
+        DefaultValidator(validator) :> 'a IValidator

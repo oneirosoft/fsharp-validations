@@ -50,7 +50,9 @@ let ``ruleFor produces multiple errors`` () =
 let ``ruleSet produces Success`` () =
     let foo = { Bar = "Hello, World!" }
     let result = foo |> ruleSet [ ruleFor <@ _.Bar @> [ notEmpty ] ]
-    Assert.True(result.IsSuccess)
+    match result with
+    | Success x -> Assert.Equal(foo, x)
+    | Failure _ -> Assert.Fail "Expected success"
     
 [<Fact>]
 let ``ruleSet produces Failure`` () =
@@ -102,4 +104,6 @@ let ``ruleSet to IValidator and is valid`` () =
         ]
         |> toValidator
     let result = foo |> validator.Validate
-    Assert.True(result.IsSuccess)
+    match result with
+    | Success x -> Assert.Equal(foo, x)
+    | Failure _ -> Assert.Fail "Expected success"
