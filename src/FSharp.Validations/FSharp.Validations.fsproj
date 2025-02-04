@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ValidationResult.fs" />
     <Compile Include="Validator.fs" />
     <Compile Include="StringRules.fs" />
     <Compile Include="IValidator.fs" />

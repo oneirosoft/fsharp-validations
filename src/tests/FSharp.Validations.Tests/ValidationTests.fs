@@ -1,5 +1,6 @@
 ﻿module ValidationTests
 
+open System.ComponentModel.DataAnnotations
 open FSharp.Validations
 open Xunit
 
@@ -49,10 +50,10 @@ let ``ruleFor produces multiple errors`` () =
 [<Fact>]
 let ``ruleSet produces Success`` () =
     let foo = { Bar = "Hello, World!" }
-    let result = foo |> ruleSet [ ruleFor <@ _.Bar @> [ notEmpty ] ]
-    match result with
-    | Success x -> Assert.Equal(foo, x)
-    | Failure _ -> Assert.Fail "Expected success"
+    foo
+    |> ruleSet [ ruleFor <@ _.Bar @> [ notEmpty ] ]
+    |> ValidationResult.map (fun x -> Assert.Equal(foo, x))
+    |> ValidationResult.defaultWith (fun _ -> Assert.Fail "Expected success")
     
 [<Fact>]
 let ``ruleSet produces Failure`` () =

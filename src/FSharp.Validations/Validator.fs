@@ -9,21 +9,6 @@ open Microsoft.FSharp.Linq.RuntimeHelpers.LeafExpressionConverter
 
 type ValidationError private = { property: string; message: string }
 
-/// <summary>
-/// <para>
-/// Validation result union which can be either a success or a failure.
-/// </para>
-/// <para>
-/// A success contains the validated entity.
-/// </para>
-/// <para>
-/// A failure contains a map of property names to error messages.
-/// </para>
-/// </summary>
-type ValidationResult<'a> =
-    | Success of 'a
-    | Failure of Map<string, string list>
-
 type Validator<'a> = 'a -> 'a ValidationResult
 
 let private createExpression (expr: ('a -> 'b) Expr) =
