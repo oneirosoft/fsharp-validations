@@ -43,6 +43,32 @@ match result with
 | Failure errors -> errors |> Map.iter (printfn "%s: %A")
 ```
 
+## Dependency Injection
+
+A function is provided to convert any `'a -> 'a ValidationResult` to
+an `'a IValidator` using the provided `toValidator` function.
+
+The resulting `'a IValidator` can be used for Dependency Injection.
+
+```fsharp
+open Microsoft.Extensions.DependencyInjection
+
+type Foo = { Bar: string }
+
+let validateFoo =
+    ruleSet<Foo> [ ruleFor <@ _.Bar @> [ notEmpty ] ]
+
+let fooValidator = validateFoo |> toValidator
+
+let result = fooValidator.Validate({ Bar = "Hello, World!" })
+
+// Add to Dependency Injection
+
+let services = ServiceCollection() :> IServiceCollection
+services.AddScoped<Foo IValidator>(fun _ -> fooValidator) |> ignore
+
+```
+
 ## License, Copywright, Etc.
 
 FSharp.Validations is subject to copywright @ 2025 Oneirosoft and other
