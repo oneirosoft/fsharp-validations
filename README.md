@@ -1,5 +1,8 @@
 # FSharp.Validations
 
+[![FSharp Validations CI](https://github.com/oneirosoft/fsharp-validations/actions/workflows/fsharp-validations.yml/badge.svg)](https://github.com/oneirosoft/fsharp-validations/actions/workflows/fsharp-validations.yml)
+![NuGet Version](https://img.shields.io/nuget/v/Oneiro.FSharp.Validations?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FOneiro.FSharp.Validations)
+
 FSharp Validations is a validation library designed with a functional first
 approach.
 
