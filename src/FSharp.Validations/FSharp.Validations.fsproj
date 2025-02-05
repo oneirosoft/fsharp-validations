@@ -5,6 +5,30 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>Oneiro.FSharp.Validations</PackageId>
+    <Authors>Oneirosoft Contributors</Authors>
+    <Company>Oneirosoft</Company>
+    <Description>An F# validation library.</Description>
+    <PackageTags>fsharp;validation</PackageTags>
+    <RepositoryUrl>https://github.com/oneirosoft/fsharp-validations</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/oneirosoft/fsharp-validations/blob/main/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/oneirosoft/fsharp-validations</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>oneiro_icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.images\oneiro_icon.png" 
+          Pack="true"
+          PackagePath="."
+          Link="oneiro_icon.png" />
+    <None Include="README.md" Pack="true" PackagePath="." />
+    <None Include="LICENSE" Pack="true" PackagePath="." />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="ValidationResult.fs" />
     <Compile Include="Validator.fs" />
