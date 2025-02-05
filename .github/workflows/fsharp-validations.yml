@@ -1,4 +1,4 @@
-name: NewType CI
+name: FSharp Validations CI
 
 on:
   push:

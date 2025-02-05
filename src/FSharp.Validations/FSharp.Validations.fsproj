@@ -13,8 +13,7 @@
     <Description>An F# validation library.</Description>
     <PackageTags>fsharp;validation</PackageTags>
     <RepositoryUrl>https://github.com/oneirosoft/fsharp-validations</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageLicenseUrl>https://github.com/oneirosoft/fsharp-validations/blob/main/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/oneirosoft/fsharp-validations</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>oneiro_icon.png</PackageIcon>
@@ -25,8 +24,8 @@
           Pack="true"
           PackagePath="."
           Link="oneiro_icon.png" />
-    <None Include="README.md" Pack="true" PackagePath="." />
-    <None Include="LICENSE" Pack="true" PackagePath="." />
+    <None Include="../../README.md" Pack="true" PackagePath="." />
+    <None Include="../../LICENSE" Pack="true" PackagePath="." />
   </ItemGroup>
 
   <ItemGroup>
