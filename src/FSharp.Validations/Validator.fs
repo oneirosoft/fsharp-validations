@@ -74,14 +74,34 @@ let ruleFor<'a, 'b> (selector: Expr<'a -> 'b>) (rules: (('b -> bool) * string) l
     
     rules
     |> List.map (fun (rule, message) -> (entity |> selector.Invoke |> rule, message))
-    |> List.map (function | true, _ -> Ok entity | _, msg -> Error { message = msg; property = propertyName })
+    |> List.map (function
+        | true, _ -> Ok entity
+        | _, msg -> Error { message = msg; property = propertyName })
     |> List.fold (fun acc x ->
         match (x, acc) with
-        | Ok x, Ok _ -> Ok x
-        | Error result, Error lst -> Error (lst @ [result])
-        | Error result, Ok _ -> Error [result]
-        | Ok _, Error lst -> Error lst) (Ok entity)
-
+        | Ok x, Success _ -> Success x
+        | Error problem, Success _ ->
+            [ problem.property, [ problem.message ] ]
+            |> Map.ofList
+            |> Failure
+        | Error problem, Failure map ->
+           Map.change problem.property (Option.map ((@) [ problem.message ]) >> Option.orElse (Some [ problem.message ])) map
+           |> Failure
+        | Ok _, Failure map -> Failure map
+    ) (Success entity) 
+    
+let ruleSetFor<'a, 'b> (selector: Expr<'a -> 'b>) (validator: 'b Validator) entity =
+    let selector, propertyName = createExpression selector
+    
+    match entity |> selector.Invoke |> validator with
+    | Success _ -> Success entity
+    | Failure map ->
+        map
+        |> Map.toList
+        |> List.map (fun (key, value) -> ($"{propertyName}.{key}", value))
+        |> Map.ofList
+        |> Failure
+        
 /// <summary>
 /// Creates a rule set for the given entity.
 /// <code>
@@ -105,25 +125,17 @@ let ruleFor<'a, 'b> (selector: Expr<'a -> 'b>) (rules: (('b -> bool) * string) l
 /// <see cref="ValidationResult{T}" />
 /// </returns>
 /// </summary>
-let ruleSet<'a> rules: 'a Validator =
+let ruleSet<'a> (rules: list<'a -> 'a ValidationResult>): 'a Validator =
     fun entity ->
     rules
     |> List.map (fun rule -> rule entity)
     |> List.fold (fun acc x ->
         match (x, acc) with
-        | Ok x, Success _ -> Success x
-        | Error problems, Success _ ->
-            problems
-            |> List.groupBy _.property
-            |> List.map (fun (key, value) -> (key, value |> List.map _.message))
-            |> Map.ofList
+        | Success _, Success _ -> Success entity
+        | Failure map, Success _ -> Failure map
+        | Failure map, Failure map' ->
+            map |> Map.fold (fun acc key value -> acc |> Map.add key value) map'
             |> Failure
-        | Error problems, Failure map ->
-            problems
-            |> List.groupBy _.property
-            |> List.map (fun (key, value) -> (key, value |> List.map _.message))
-            |> List.fold (fun acc (key, values) ->
-                Map.change key (Option.map ((@) values) >> Option.orElse (Some values)) acc) map
-            |> Failure
-        | Ok _, Failure map -> Failure map
+        | Success _, Failure map -> Failure map
     ) (Success entity)
+    

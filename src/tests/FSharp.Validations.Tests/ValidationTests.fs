@@ -1,10 +1,10 @@
 ﻿module ValidationTests
 
-open System.ComponentModel.DataAnnotations
 open FSharp.Validations
 open Xunit
 
 type Foo = { Bar: string }
+type Bar = { Foo: Foo; Baz: string }
 type FooBar = { Bar: string; Baz: string }
 
 let rules = [|
@@ -28,24 +28,21 @@ let ``rule has message`` (arg: (string -> bool) * string, expected: string optio
 let ``ruleFor produces ok`` () =
     let foo = { Bar = "Hello, World!" }
     let result = foo |> ruleFor <@ _.Bar @> [ notEmpty ]
-    Assert.True(result.IsOk)
+    Assert.True(result.IsSuccess)
     
 [<Fact>]
 let ``ruleFor produces error`` () =
     let foo = { Bar = "" }
     let result = foo |> ruleFor <@ _.Bar @> [ notEmpty ]
-    Assert.True(result.IsError)
+    Assert.True(result.IsFailure)
     
 [<Fact>]
 let ``ruleFor produces multiple errors`` () =
     let foo = { Bar = "" }
-    let result = foo |> ruleFor <@ _.Bar @> [ notEmpty; minLength 5 ]
-    
-    Assert.True(result.IsError)
-    
-    result
-    |> Result.mapError _.Length
-    |> Result.mapError (fun x -> Assert.Equal(2, x))
+    match foo |> ruleFor <@ _.Bar @> [ notEmpty; minLength 5; ] with
+    | Success _ -> Assert.Fail "Expected failure"
+    | Failure fails ->
+        Assert.Equal (2, fails |> Map.find "Bar" |> Seq.length)
     
 [<Fact>]
 let ``ruleSet produces Success`` () =
@@ -96,6 +93,31 @@ let ``ruleSet produces multiple property failures`` () =
         Assert.Equal(expectedBar.Length, 2)
         Assert.Equal(expectedBaz.Length, 2)
         
+[<Fact>]
+let ``ruleSet with validatorFor and rule`` () =
+    let foo = { Bar = "Hello, World!" }
+    let bar = { Foo = foo; Baz = "" }
+   
+    let fooValidator =
+        ruleSet<Foo> [ ruleFor <@ _.Bar @> [ maxLength 5 ] ]
+        
+    let barValidator =
+        ruleSet<Bar> [
+            ruleSetFor <@ _.Foo @> fooValidator
+            ruleFor <@ _.Baz @> [ notEmpty ]
+        ]
+        
+    let result = bar |> barValidator
+    
+    match result with
+    | Success _ -> Assert.Fail "Expected failure"
+    | Failure fails ->
+        let expected = fails |> Map.find "Baz" 
+        Assert.Equal(expected.Length, 1)
+        let expected = fails |> Map.find "Foo.Bar"
+        Assert.Equal(expected.Length, 1)
+        
+    
 [<Fact>]
 let ``ruleSet to IValidator and is valid`` () =
     let foo = { Bar = "Hello, World!" }

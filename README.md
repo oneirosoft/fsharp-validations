@@ -10,6 +10,7 @@ The library supports:
 
 - The ability to create rules for properties using the `RuleFor<'a, 'b>` function
 - The ability to apply a list of rules to a propery using `Rule<'a>`
+- the ability to reuse validators using `ruleSetFor<'a, 'b>`
 - The creation of `RuleSets<'a> -> 'a ValidationResult`
 
 The rules can then be evaluated at any time thanks to the magic of currying.
@@ -29,6 +30,28 @@ let result = validateFoo { Bar = "Hello, World!" }
 
 // result is Failure (map [("Bar", ["Value must be less than 10"])])
 ```
+
+## Reusing Rule Sets
+
+Rule sets can be reused by creating a `RuleSet<'a>` and applying it to
+a property using the `ruleSetFor<'a, 'b>` function.
+
+```fsharp
+type Bar = { Value: string }
+type Foo = { Bar: Bar }
+
+let validateBar =
+    ruleSet [
+        ruleFor <@ _.Value @> [
+            rule (fun x -> x.Length > 0) (Some "Length must be greater than 0")
+            rule (fun x -> x.Length < 10) (Some "Length must be less than 10") ] ]
+
+let validateFoo =
+    ruleSet [
+        ruleSetFor <@ _.Bar @> validateBar ]
+```
+
+_Any resulting errors for `Bar` will have a key of `Bar.{propertyName}`._
 
 ## `ValidationResult<'a>`
 
